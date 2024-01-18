@@ -1,0 +1,12 @@
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class AppService {
+  createUser(user: any) {
+    // user.id = 1;
+    // user.createdAt = new Date();
+    // user.updatedAt = new Date();
+    // const userReal = UserDto.plainToClass(user);
+    return user;
+  }
+}
