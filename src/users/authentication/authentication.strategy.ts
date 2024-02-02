@@ -20,6 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private validate(payload: string): Promise<User | never> {
+    console.log('payload', payload);
     return this.helper.validateUser(payload);
   }
 }

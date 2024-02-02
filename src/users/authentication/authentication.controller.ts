@@ -5,20 +5,21 @@ import {
   Post,
   ClassSerializerInterceptor,
   UseInterceptors,
-  UseGuards,
-  Req,
+  // UseGuards,
+  // Req,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { User } from '../entities/user.entity';
-import { JwtAuthenticationGuard } from './authentication.guard';
+// import { JwtAuthenticationGuard } from './authentication.guard';
 import { AuthenticationService } from './authentication.service';
-import { LoginDto } from './dto/login';
-import { RegisterDto } from './dto/register';
-import { LoginResponseDto } from './dto/response.login';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginResponseDto } from './dto/response.login.dto';
+import { TResType } from 'src/types/TResType';
 
 @ApiTags('authentication')
-@Controller('auth')
+@Controller('api/auth')
 export class AuthenticationController {
   @Inject(AuthenticationService)
   private readonly service: AuthenticationService;
@@ -26,7 +27,7 @@ export class AuthenticationController {
   @ApiOkResponse({ status: 200, type: User })
   @Post('register')
   @UseInterceptors(ClassSerializerInterceptor)
-  private register(@Body() body: RegisterDto): Promise<User | never> {
+  private register(@Body() body: RegisterDto): Promise<TResType | never> {
     return this.service.register(body);
   }
 

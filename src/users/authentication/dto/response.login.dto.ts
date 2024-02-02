@@ -6,6 +6,6 @@ export class LoginResponseDto {
   @ApiProperty()
   public readonly token: string;
 
-  @ApiProperty()
-  public readonly user: User;
+  // @ApiProperty()
+  // public readonly user: User;
 }

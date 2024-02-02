@@ -1,4 +1,12 @@
-import { Injectable, HttpException, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+  // HttpException,
+  // HttpStatus,
+  // UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,9 +25,9 @@ export class AuthenticationHelper {
     this.jwt = jwt;
   }
 
-  public async decode(token: string): Promise<unknown> {
-    return this.jwt.decode(token, null);
-  }
+  // public async decode(token: string): Promise<unknown> {
+  //   return this.jwt.decode(token, null);
+  // }
 
   public async validateUser(decoded: any): Promise<User> {
     return this.repository.findOne({ where: { user_id: decoded.id } });
@@ -39,7 +47,7 @@ export class AuthenticationHelper {
     return bcrypt.hashSync(password, salt);
   }
 
-  private async validate(token: string): Promise<boolean | never> {
+  public async getUserByToken(token: string): Promise<User | never> {
     const decoded: unknown = this.jwt.verify(token);
     if (!decoded) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
@@ -51,6 +59,6 @@ export class AuthenticationHelper {
       throw new UnauthorizedException();
     }
 
-    return true;
+    return user;
   }
 }

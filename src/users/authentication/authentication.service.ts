@@ -5,9 +5,10 @@ import { Repository } from 'typeorm';
 import { apiErrors } from '../../constants/constant.error';
 import { User } from '../entities/user.entity';
 import { AuthenticationHelper } from './authentication.helper';
-import { LoginDto } from './dto/login';
-import { RegisterDto } from './dto/register';
-import { LoginResponseDto } from './dto/response.login';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginResponseDto } from './dto/response.login.dto';
+import { TResType } from 'src/types/TResType';
 
 @Injectable()
 export class AuthenticationService {
@@ -17,22 +18,20 @@ export class AuthenticationService {
   @Inject(AuthenticationHelper)
   private readonly helper: AuthenticationHelper;
 
-  public async register(body: RegisterDto): Promise<User | never> {
+  public async register(body: RegisterDto): Promise<TResType | never> {
     const { name, username, password, role }: RegisterDto = body;
     let user: User = await this.repository.findOne({ where: { username } });
 
     if (user) {
       throw new HttpException(apiErrors.USERNAME_EXIST, HttpStatus.CONFLICT);
     }
-
     user = new User();
-
     user.name = name;
     user.username = username;
     user.password = this.helper.encodePassword(password);
     user.role = role;
-
-    return this.repository.save(user);
+    const saveUser = await this.repository.save(user);
+    return { success: true, data: saveUser };
   }
 
   public async login(body: LoginDto): Promise<LoginResponseDto | never> {
@@ -52,10 +51,10 @@ export class AuthenticationService {
       throw new HttpException(apiErrors.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
-    return { user: user, token: this.helper.generateToken(user) };
+    return { token: this.helper.generateToken(user) };
   }
 
   public async refresh(user: User): Promise<LoginResponseDto> {
-    return { user, token: this.helper.generateToken(user) };
+    return { token: this.helper.generateToken(user) };
   }
 }

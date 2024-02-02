@@ -1,9 +1,4 @@
-import { APP_FB, STORE_SERVICE } from 'src/constants/providerKeys';
-import { UserDto } from './users.dto';
-import { UserRepository } from './users.repository';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { StoreConfig } from 'src/store/store.config';
-import { StoreService } from 'src/store/store.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -33,5 +28,20 @@ export class UserService {
     currentUser.role = role ? role : 'end-user';
     await this.repository.save(currentUser);
     return { success: true };
+  }
+
+  public async getUserById(id: string): Promise<User> {
+    const user = await this.repository.findOne({
+      where: {
+        user_id: id,
+      },
+    });
+    if (!user) {
+      throw new HttpException(apiErrors.USER_NOT_FOUND, HttpStatus.CONFLICT);
+    }
+    delete user.password;
+    delete user.user_id;
+
+    return user;
   }
 }
